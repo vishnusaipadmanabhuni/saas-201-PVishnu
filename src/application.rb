@@ -1,104 +1,202 @@
-#require './department' # Include other files in the same directory
-require_relative './department'
+require_relative './department.rb'
+
 class Application
-   attr_accessor :departments
+ attr_accessor :departments
+  
   def initialize
-    self.departments=[]
-    ['EEE','MECH','CSE','CIVIL'].each do |dept|
-    self.departments.push Department.new(dept)
-    end
-    #self.departments = ['EEE', 'MECH', 'CSE', 'CIVIL'].each { |dept| Department.new dept }
+
+  self.departments=[]
+  self.departments[0]=Department.new("EEE")
+  self.departments[1]=Department.new("MECH")
+  self.departments[2]=Department.new("CSE")
+  self.departments[3]=Department.new("CIVIL")
   end
+
 
   def enroll(student_name, student_department)
-    #This is a sample implementation. you can write your own code
-    s="a"
-    department = self.departments.detect { |dept| dept.getname == student_department }
-    rollno = department.enroll(student_name)
-    section =rollno[3]
-    if rollno == 0
-      s=""
-      s=s+ "Error: Seats are not available in #{student_department}"
+    case student_department
+    when "EEE"
+    self.departments[0].enroll student_name,student_department
+    when "MECH"
+    self.departments[1].enroll student_name,student_department
+    when "CSE"
+    self.departments[2].enroll student_name,student_department
+    when "CIVIL"
+    self.departments[3].enroll student_name,student_department
     else
-      s=""
-      s=s+"You have been enrolled to #{student_department}" 
-      s=s+"\nYou have been allotted section #{section}" 
-      s=s+"\nYour roll number is #{rollno}"
+    puts "error:seats are not available in #{student_department}"
     end
-    return s
-  end
+    end
 
   def change_dept(student_name, student_department)
-    ## write some logic to frame the string below
-    s1="a"
-    department1= self.departments.detect {|dept| dept.get_department(student_name)!=nil}
-    if department1==nil
-      return "abc"
-    end
-    department2 = self.departments.detect {|dept| dept.getname == student_department}
-    if department2==nil
-      return "abc"
-    end
-    rollno = department2.enroll student_name
-    section =rollno[3]
-    if rollno != 0
-      s1=""
-      department1.del(student_name)
-      s1=s1+"You have been enrolled to #{student_department}" 
-      s1=s1+"\nYou have been allotted section #{section}" 
-      s1=s1+"\nYour roll number is #{rollno}"
-    else
-      s1=""
-     s1=s1+"Error: Seats are not available in #{student_department} "
-    end
-    return s1
-  end
+  
+   temp=""
+   temp1=""
+   te=[]
+   te.push(self.departments[0])
+   te.push(self.departments[1])
+   te.push(self.departments[2])
+   te.push(self.departments[3])
+   te.each do |dept|
+      dept.getdepsec.each do|sec|
+        sec.each do|name|
+            if(name == student_name)
+               temp=dept
+               temp1=sec
+            end   
+        end
+      end
+    end  
+     
+     temp1.delete(student_name)
+     enroll(student_name,student_department)
+     
+ end
 
   def change_section(student_name, section)
-    ## write some logic to frame the string below
-    s2="a"
-    department= self.departments.detect {|dept| dept.get_department(student_name)!=nil}
-    if department==nil
-      return "abc"
-    end
-    if department.get_section(section)!=nil
-      department.del student_name
-      rollno = department.enrolla student_name,section
-      section =rollno[3]
-      s2=""
-      s2=s2+"You have been allotted section #{section}" 
-      s2=s2+"\nYour roll number is #{rollno}"
-    else
-      s2=""
-     s2=s2+"Error: Seats are not available in #{section} section"
-    end
-    return s2
-  end
+    temp=""
+   temp1=""
+   te=[]
+   c=""
+   
+   te.push(self.departments[0])
+   te.push(self.departments[1])
+   te.push(self.departments[2])
+   te.push(self.departments[3])
+    te.each do |dept|
+      dept.getdepsec.each do|sec|
+        sec.each do|name|
+            if(name == student_name)
+               temp=dept
+               temp1=sec
+            end   
+        end
+      end
+    end  
+     temp1.delete(student_name)
+     if(section=="A" && temp.asec.length<3)
+          temp.asec.push(student_name)
+          temp.asec.sort
+          str="You have been allotted section #{section}" 
+          str+="\nYour roll number is #{temp.dname}A0#{temp.asec.find_index(student_name)+1}"
+          
+
+      elsif(section=="B" && temp.bsec.length<3)
+          temp.bsec.push(student_name)
+          temp.bsec.sort
+          #str = "You have been enrolled to #{temp.dname} " 
+          str="You have been allotted section #{section}" 
+          str+="\nYour roll number is #{temp.dname}B0#{temp.bsec.find_index(student_name)+1}"
+          #return str
+
+      elsif(section=="C" && temp.csec.length<3)
+          temp.csec.push(student_name)
+          temp.csec.sort
+          #str = "You have been enrolled to #{temp.dname} " 
+          str="You have been allotted section #{section}" 
+          str+="\nYour roll number is #{temp.dname}C0#{temp.csec.find_index(student_name)+1}"
+          #return str
+      else
+          str= "Error: Seats are not available in #{section}"
+      end
+      return str
+end
 
   def department_view(student_dept)
-    ## write some logic to frame the string below
-    department = self.departments.detect { |dept| dept.getname == student_dept }
-    if department==nil
-      return "abc"
+    te=[]
+   c=""
+   temp=""
+   temp1=[]
+   str="List of students:"
+   te.push(self.departments[0])
+   te.push(self.departments[1])
+   te.push(self.departments[2])
+   te.push(self.departments[3])
+    te.each do |dept|
+      if(dept.dname==student_dept)
+        temp=dept;
+      end
     end
-    return department.get_department_view
+    temp.getdepsec.each do|sec|
+       sec.each do|name|
+           if(sec==temp.asec)
+               c="A"
+               temp1=temp.asec
+           elsif(sec==temp.bsec)
+               c="B"
+               temp1=temp.bsec
+           elsif(sec==temp.csec)
+                c="C"    
+                temp1=temp.csec
+           end 
+           #str+="\n#{name} - #{student_dept}#{c}0#{sec.index(name)+1}"
+          end
+           end
+        temp1.each do|name|
+          str+="\n#{name} - #{temp.dname}#{c}0#{temp1.index(name)+1}"
+          
+      end  
+  return str
   end
 
   def section_view(student_dept, section)
-    ## write some logic to frame the string below
-    department= self.departments.detect {|dept| dept.getname == student_dept}
-    if department==nil
-      return "abc"
+   te=[]
+   c=""
+   temp=""
+   temp1=""
+   str="List of students:"
+   te.push(self.departments[0])
+     te.push(self.departments[1])
+       te.push(self.departments[2])
+         te.push(self.departments[3])
+    te.each do |dept|
+      if(dept.dname==student_dept)
+        temp=dept;
     end
-    return department.get_section_view section
+  end    
+
+           if(section=='A')
+               c="A"
+               temp1=temp.asec
+           elsif(section=="B")
+               c="B"
+               temp1=temp.bsec
+           elsif(section=="C")
+                c="C"    
+                temp1=temp.csec
+           end 
+temp1.each do|name|
+   str+="\n#{name} - #{temp.dname}#{c}0#{temp1.index(name)+1}"
+  end
+return str
+end
+
+def student_details(student_name)
+   te=[]
+   c=""
+   temp=""
+   rolllno=0
+   temp1=""
+   te.push(self.departments[0])
+   te.push(self.departments[1])
+   te.push(self.departments[2])
+   te.push(self.departments[3])
+    te.each do |dept|
+     dept.getdepsec.each do|sec|
+      sec.each do |name|
+           if(name==student_name)
+              temp1=sec
+              temp=dept.dname
+
+
+           end
+          end
+     end
+    end 
+    b=temp1.index(student_name)
+  str="#{student_name} - #{temp} - Section A - #{temp}A01"
+  return str
+
   end
 
-  def student_details(student_name)
-    ## write some logic to frame the string below
-    department= self.departments.detect {|dept| dept.get_department(student_name)!=nil}
-    if department==nil
-      return "abc"
-    end
-    return department.stud_info student_name
-  end
 end
